@@ -1,0 +1,21 @@
+.setup: &setup
+  before_script:
+    - curl -o cli53 -L https://github.com/barnybug/cli53/releases/download/0.8.6/cli53-linux-amd64
+    - chmod +x cli53
+
+test:
+  <<: *setup
+  script:
+    - cd zones
+    - for zone in *; do ../cli53 import --dry-run --replace --file $zone $zone; done
+  except:
+    - master
+
+deploy:
+  <<: *setup
+  script:
+    - cd zones
+    - for zone in *; do ../cli53 import --replace --file $zone $zone; done
+  only:
+    - master
+
